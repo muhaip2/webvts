@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFRCloud - NET || Converter</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="https://raw.githubusercontent.com/AFRcloud/BG/main/icons8-film-noir-80.png">
+
+    <!-- Meta tags -->
+    <meta property="og:image:secure_url" content="https://raw.githubusercontent.com/akulelaki696/bg/refs/heads/main/20250106_010158.jpg"/>
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)"/>
+    <meta name="theme-color" content="#f8f9fa" media="(prefers-color-scheme: light)"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/converter.css">
+    <style>
+    
+    </style>
+
+    <!-- js-yaml for robust YAML parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="tech-detail tech-detail-1"></div>
+            <div class="tech-detail tech-detail-2"></div>
+            <div class="tech-detail tech-detail-3"></div>
+
+            <div class="title-container">
+                <h1 class="title">AFRCloud - NET</h1>
+                <p class="subtitle">V2Ray ↔ Clash Converter</p>
+            </div>
+
+            <div class="converter-container">
+                <!-- V2Ray to Config Section -->
+                <div id="v2ray-to-config-section" class="converter-section">
+                    <div class="form-group">
+                        <label for="v2ray-input">V2Ray Links (vmess://, vless://, trojan://, ss://)</label>
+                        <textarea id="v2ray-input" class="converter-textarea" placeholder="Paste your V2Ray links here, one per line..."></textarea>
+                    </div>
+
+                    <!-- New: Custom Server / Bug Option -->
+                    <div class="form-group">
+                        <label>Custom Server / Bug</label>
+                        <div class="option-selector">
+                            <button id="custom-server-toggle" class="option-btn">Enable Custom Server</button>
+                        </div>
+                    </div>
+                    <div class="form-group" id="custom-server-input-container" style="margin-top: 1rem; display: none;">
+                        <label for="custom-server-input">Custom Server/Bug Host</label>
+                        <input type="text" id="custom-server-input" class="costum-server" placeholder="Enter custom server or bug host (e.g., example.com)">
+
+                        <!-- New: Wildcard/Non-Wildcard Toggle -->
+                        <div class="option-group" id="wildcard-mode-selector" style="margin-top: 1rem;">
+                            <label class="option-label">SNI/WS Host Mode:</label>
+                            <div class="option-selector">
+                                <button id="non-wildcard-btn" class="option-btn active">Non-Wildcard</button>
+                                <button id="wildcard-btn" class="option-btn">Wildcard</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Moved Configuration Type above Clash Configuration Options -->
+                    <div class="form-group">
+                        <label>Configuration Type</label>
+                        <div class="config-type-selector">
+                            <button id="minimal-config" class="format-btn active">Minimal (Proxies Only)</button>
+                            <button id="full-config" class="format-btn">Full Configuration</button>
+                        </div>
+                    </div>
+
+                    <!-- Clash Configuration Options - now conditionally visible -->
+                    <div class="form-group" id="clash-options" style="margin-top: 1rem; display: none;">
+                        <label>Clash Configuration Options</label>
+
+                        <div class="option-group">
+                            <label class="option-label">DNS Mode:</label>
+                            <div class="option-selector">
+                                <button id="fake-ip" class="option-btn active">Fake IP</button>
+                                <button id="redir-host" class="option-btn">Redir Host</button>
+                            </div>
+                        </div>
+
+                        <div class="option-group">
+                            <label class="option-label">Proxy Groups:</label>
+                            <div class="option-selector">
+                                <button id="best-ping" class="option-btn active">Best Ping</button>
+                                <button id="load-balance" class="option-btn">Load Balance</button>
+                                <button id="fallback" class="option-btn">Fallback</button>
+                                <button id="all-groups" class="option-btn">All Groups</button>
+                            </div>
+                        </div>
+
+                        <div class="option-group">
+                            <label class="option-label">Rule Sets:</label>
+                            <div class="option-selector">
+                                <button id="ads-block" class="option-btn active">Ads Block</button>
+                                <button id="porn-block" class="option-btn active">Porn Block</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="convert-v2ray" class="convert-btn">
+                        <i class="fas fa-sync-alt"></i> Convert
+                    </button>
+
+                    <div class="form-group">
+                        <div class="result-header">
+                            <label for="config-output">Result</label>
+                            <div class="result-actions">
+                                <button id="copy-config" class="copy-btn">
+                                    <i class="far fa-copy"></i> Copy
+                                </button>
+                                <button id="save-proxy-provider" class="download-btn">
+                                    <i class="fas fa-download"></i> Save Proxy
+                                </button>
+                                <button id="save-full-config" class="download-btn">
+                                    <i class="fas fa-file-download"></i> Save Full
+                                </button>
+                            </div>
+                        </div>
+                        <textarea id="config-output" class="converter-textarea result-textarea" readonly placeholder="Converted configuration will appear here..."></textarea>
+                    </div>
+                </div>	
+				<br>
+                <a href="index.html" class="convert-btn">
+                    <i class="fas fa-home"></i> Home
+                </a>
+
+                <div id="loading-indicator" class="loading-indicator hidden">
+                    <div class="spinner"></div>
+                    <p>Converting...</p>
+                </div>
+
+                <div id="error-message" class="error-message hidden"></div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="circuit-line circuit-line-1"></div>
+        <div class="circuit-line circuit-line-2"></div>
+        <div class="circuit-line circuit-line-3"></div>
+        <div class="circuit-line circuit-line-4"></div>
+        <div class="circuit-dot circuit-dot-1"></div>
+        <div class="circuit-dot circuit-dot-2"></div>
+        <div class="circuit-dot circuit-dot-3"></div>
+        <div class="circuit-dot circuit-dot-4"></div>
+
+        <div class="footer-logo">AFRCloud - NET</div>
+        <div class="footer-powered">POWERED BY SECURE TECHNOLOGY</div>
+        <div class="footer-social">
+            <a href="https://t.me/Noir7R" class="social-link" target="_blank">
+                <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21.198 2.433a2.242 2.242 0 0 0-1.022.215l-8.609 3.33c-2.068.8-4.133 1.598-5.724 2.21a405.15 405.15 0 0 1-2.849 1.09c-.42.147-.99.332-1.473.901-.728.968.193 1.798.919 2.286 1.61.516 3.275 1.009 4.654 1.472.846 1.467 1.618 2.796 2.503 4.532.545 1.062 1.587 2.739 3.19 2.756 1.26.033 2.052-.6 3.542-1.95a142.91 142.91 0 0 1 2.43-2.053c1.686-.142 3.382-.284 5.12-.436.887-.075 1.92-.262 2.405-1.226.436-.877-.015-1.35-.48-1.874l-3.881-4.369-5.481-6.174S22.185 2.128 21.198 2.433z"></path>
+                    <path d="M18.167 7.068c.237 1.632-1.162 6.872-1.766 8.849"></path>
+                </svg>
+            @Noir7R
+        </a>
+    </div>
+        <div class="footer-social">
+        <a href="https://t.me/inconigto_Mode" class="social-link" target="_blank">
+            <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.198 2.433a2.242 2.242 0 0 0-1.022.215l-8.609 3.33c-2.068.8-4.133 1.598-5.724 2.21a405.15 405.15 0 0 1-2.849 1.09c-.42.147-.99.332-1.473.901-.728.968.193 1.798.919 2.286 1.61.516 3.275 1.009 4.654 1.472.846 1.467 1.618 2.796 2.503 4.532.545 1.062 1.587 2.739 3.19 2.756 1.26.033 2.052-.6 3.542-1.95a142.91 142.91 0 0 1 2.43-2.053c1.686-.142 3.382-.284 5.12-.436.887-.075 1.92-.262 2.405-1.226.436-.877-.015-1.35-.48-1.874l-3.881-4.369-5.481-6.174S22.185 2.128 21.198 2.433z"></path>
+                <path d="M18.167 7.068c.237 1.632-1.162 6.872-1.766 8.849"></path>
+            </svg>
+            @inconigto_Mode
+        </a>
+        <a href="https://t.me/InconigtoMode" class="social-link" target="_blank">
+            <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.198 2.433a2.242 2.242 0 0 0-1.022.215l-8.609 3.33c-2.068.8-4.133 1.598-5.724 2.21a405.15 405.15 0 0 1-2.849 1.09c-.42.147-.99.332-1.473.901-.728.968.193 1.798.919 2.286 1.61.516 3.275 1.009 4.654 1.472.846 1.467 1.618 2.796 2.503 4.532.545 1.062 1.587 2.739 3.19 2.756 1.26.033 2.052-.6 3.542-1.95a142.91 142.91 0 0 1 2.43-2.053c1.686-.142 3.382-.284 5.12-.436.887-.075 1.92-.262 2.405-1.226.436-.877-.015-1.35-.48-1.874l-3.881-4.369-5.481-6.174S22.185 2.128 21.198 2.433z"></path>
+                <path d="M18.167 7.068c.237 1.632-1.162 6.872-1.766 8.849"></path>
+            </svg>
+            @InconigtoMode
+        </a>
+    </div>
+    <div class="footer-year">© <span id="current-year"></span></div></footer>
+    <div id="donation-button" class="donate-btn">
+        <i class="fas fa-hand-holding-heart"></i>
+    </div>
+
+    <!-- Donation Modal -->
+    <div id="donation-modal" class="donation-modal">
+        <div class="donation-backdrop" id="donation-backdrop"></div>
+        <div class="donation-content" id="donation-content">
+            <!-- Animated border -->
+            <div class="donation-border">
+                <div class="donation-border-animation"></div>
+            </div>
+
+            <div class="donation-body">
+                <button id="close-donation" class="close-donation">
+                    <i class="fas fa-times"></i>
+                </button>
+
+                <h3 class="donation-title">Support Inconigto-Mode</h3>
+                <p class="donation-text">Your donation helps keep our services running</p>
+
+                <div class="qris-container">
+                    <!-- Inner animated border -->
+                    <div class="qris-border">
+                        <div class="qris-border-animation"></div>
+                    </div>
+                    <div class="qris-image-container">
+                        <img src="https://raw.githubusercontent.com/AFRcloud/SirenWeb/refs/heads/main/qrcode-0002010102%20(3).jpeg" alt="Donation QR Code" class="qris-image">
+                    </div>
+                </div>
+
+                <p class="donation-small-text">Scan this QR code with your payment app to donate</p>
+            </div>
+        </div>
+    </div>
+    <!-- JavaScript -->
+    <script src="js/common.js"></script>
+     <script src="js/converter.js"></script>
+   
+</body>
+</html>

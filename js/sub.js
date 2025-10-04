@@ -8,7 +8,7 @@ const CONFIG = {
   proxyListUrl: "ProxyList.txt",
   apiCheckUrl: "https://api.jb8fd7grgd.workers.dev",
   mainDomains: [
-    "swd.qzz.io", "sene.qzz.io"
+    "swd.qzz.io"
   ],
   maxProxies: 50,
   defaultProxyCount: 5,

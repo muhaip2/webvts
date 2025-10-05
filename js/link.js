@@ -15,7 +15,7 @@ function generateRandomUUID() {
 
 // Configuration
 const serverDomains = [
-  "nzr.biz.id"
+  "swd.qzz.io", "sene.qzz.io"
 ];
 const API_STATUS_URL = "https://api.jb8fd7grgd.workers.dev";
 let selectedServerDomain = serverDomains[0] // Default to first domain
